@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My VP ❤️</title>
+    <style>
+        body {
+            background-color: #fffaf0; /* Creamy Ahimsa vibe */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #5d4037;
+            text-align: center;
+        }
+
+        #game-container {
+            padding: 20px;
+        }
+
+        #heart {
+            font-size: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, font-size 0.3s;
+            user-select: none;
+        }
+
+        #heart:active {
+            transform: scale(0.9);
+        }
+
+        .progress-bar {
+            width: 250px;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        #progress {
+            width: 0%;
+            height: 100%;
+            background-color: #ff8a80;
+            transition: width 0.3s;
+        }
+
+        #message {
+            font-weight: bold;
+            height: 50px;
+            margin-top: 10px;
+        }
+
+        #final-note {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h2>Click the heart to charge my love signal...</h2>
+        <div id="heart">❤️</div>
+        <div class="progress-bar">
+            <div id="progress"></div>
+        </div>
+        <div id="message">Tap to start!</div>
+    </div>
+
+    <div id="final-note">
+        <h1>Happy Valentine's Day!</h1>
+        <p>Whether we're at Real Food or just window shopping in Orchard, I'm just glad I have the best partner by my side.</p>
+        <p><b>Signal Strength: 100% (Infinite)</b></p>
+    </div>
+
+    <script>
+        let clicks = 0;
+        const heart = document.getElementById('heart');
+        const progress = document.getElementById('progress');
+        const message = document.getElementById('message');
+        const gameContainer = document.getElementById('game-container');
+        const finalNote = document.getElementById('final-note');
+
+        const phrases = [
+            "Initializing signal...",
+            "Loading favorite memories...",
+            "Checking compatibility... (100% found)",
+            "Wait, the meter is breaking!",
+            "Almost there..."
+        ];
+
+        heart.addEventListener('click', () => {
+            clicks += 5;
+            let currentSize = 50 + clicks;
+            heart.style.fontSize = currentSize + 'px';
+            progress.style.width = Math.min(clicks, 100) + '%';
+
+            if (clicks < 25) message.innerText = phrases[0];
+            else if (clicks < 50) message.innerText = phrases[1];
+            else if (clicks < 75) message.innerText = phrases[2];
+            else if (clicks < 100) message.innerText = phrases[3];
+
+            if (clicks >= 100) {
+                gameContainer.style.display = 'none';
+                finalNote.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
