@@ -31,7 +31,7 @@
 
     <div id="login-screen" class="card">
         <h1>Hi Lilz ❤️</h1>
-        <p>Navigate through life's storms to reach our home.</p>
+        <p>Navigate through life's storms to reach our bright future.</p>
         <input type="text" id="passcode" placeholder="MY MOST SPECIAL DAY (DDMMYYYY)">
         <br>
         <button onclick="startQuest()">Start Our Journey</button>
@@ -53,7 +53,7 @@
         <div class="letter-text">
             <p>Dear Lilz my beloved 🥰,</p>
             <p>I hope you liked this lil surprise. I wanted to do something a bit different for you today.</p>
-            <p>I have so many aspirations for our future. These past few months have been tough for us, but it’s okay—we’ve got this. I am gonna come out as a better person from this. As a matter of fact, I’m not the type to say I’d die for you; instead, I will change for you, I will live for you, and I will be better for you.</p>
+            <p>I have so many aspirations for our future. These past few months have been tough for us, but it’s okay, we’ve got this. I am gonna come out as a better person from this. As a matter of fact, I’m not the type to say I’d die for you; instead, I will change for you, I will live for you, and I will be better for you.</p>
             <p>The patch I’m going through isn't easy, but I enjoy it because I know I’m going to emerge victorious, and our future is going to be bright. Let’s achieve all our dreams for this year together; to list a few: me driving you around, a very successful Uthraa, and my dearest one's graduation. Thank you for being you and such a blessing in my life. I will always love ❤️ my tiny specimen. 🌹😘</p>
             <p>Always with immeasurable love,<br><b>Mr Sri</b></p>
         </div>
@@ -64,13 +64,13 @@
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         const scoreEl = document.getElementById('score');
-        let gameState = 'START', score = 0, bird, obstacles, goal, animationId, bgX = 0;
+        let gameState = 'START', score = 0, bird, obstacles, goal, animationId, bgX = 0, scrollSpeed = 3.2;
 
         const STRUGGLES = ["STRESS", "DOUBT", "HARDSHIP", "STORM", "CHALLENGES", "DISTANCE", "MISUNDERSTANDING", "FATIGUE"];
         
         class Bird {
             constructor() { 
-                this.x = 50; 
+                this.x = 80; 
                 this.y = canvas.height/2; 
                 this.v = 0; 
             }
@@ -88,9 +88,9 @@
 
         class Obstacle {
             constructor(lastX) {
-                this.x = lastX + 350; // Ensure at least 350px between obstacles
+                this.x = lastX + 380; 
                 this.w = 90;
-                this.gap = 220; // Slightly larger gap for easier play
+                this.gap = 220; 
                 this.top = Math.random() * (canvas.height - this.gap - 160) + 80;
                 this.text = STRUGGLES[Math.floor(Math.random() * STRUGGLES.length)];
                 this.passed = false;
@@ -104,7 +104,7 @@
                 ctx.font = "bold 13px Poppins";
                 ctx.textAlign = "center";
                 ctx.fillText(this.text, this.x + this.w/2, this.top - 15);
-                ctx.fillText("OBSTACLE", this.x + this.w/2, this.top + this.gap + 25);
+                ctx.fillText(this.text, this.x + this.w/2, this.top + this.gap + 25);
             }
         }
 
@@ -119,23 +119,30 @@
                 obstacles = [new Obstacle(canvas.width)]; 
                 goal = null; 
                 score = 0;
+                scrollSpeed = 3.2;
                 gameState = 'PLAYING'; 
                 animate();
             } else { alert("Wrong code!"); }
         }
 
         function drawBackground() {
-            bgX -= 1;
+            bgX -= (scrollSpeed * 0.3);
             if (bgX <= -canvas.width) bgX = 0;
             ctx.fillStyle = "#fff5f5";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            // Simple moving clouds in bg
-            ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-            ctx.font = "40px serif";
-            ctx.fillText("☁️", bgX + 100, 100);
-            ctx.fillText("☁️", bgX + canvas.width + 100, 100);
-            ctx.fillText("☁️", bgX + 400, 250);
-            ctx.fillText("☁️", bgX + canvas.width + 400, 250);
+            
+            ctx.font = "30px serif";
+            // Sky elements
+            const elements = [
+                {e: "☁️", x: 100, y: 100}, {e: "🕊️", x: 600, y: 150},
+                {e: "☁️", x: 400, y: 300}, {e: "🎈", x: 800, y: 400},
+                {e: "☁️", x: 1000, y: 80}
+            ];
+            
+            elements.forEach(el => {
+                ctx.fillText(el.e, bgX + el.x, el.y);
+                ctx.fillText(el.e, bgX + el.x + canvas.width, el.y);
+            });
         }
 
         function animate() {
@@ -143,14 +150,15 @@
             bird.update(); 
             bird.draw();
 
-            if(score < 10 && obstacles.length < 3) {
+            // Stop spawning after score 9 so score 10 is the last wall
+            if(score < 9 && obstacles.length < 3) {
                 const lastObstacleX = obstacles[obstacles.length - 1].x;
                 obstacles.push(new Obstacle(lastObstacleX));
             }
 
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 let o = obstacles[i];
-                o.x -= 3.2; 
+                o.x -= scrollSpeed; 
                 o.draw();
 
                 if(bird.x + 80 > o.x && bird.x < o.x + o.w && (bird.y - 30 < o.top || bird.y > o.top + o.gap - 20)) {
@@ -165,14 +173,21 @@
             }
 
             if(score >= 10) {
-                if(!goal) goal = { x: canvas.width, y: canvas.height/2 };
-                goal.x -= 2.5;
-                ctx.font = "90px serif"; 
-                ctx.fillText("🏡", goal.x, goal.y);
+                if(!goal) goal = { x: canvas.width + 100, y: canvas.height/2 };
+                
+                // Slow down as we reach the future
+                if (scrollSpeed > 0) scrollSpeed -= 0.02;
+                if (scrollSpeed < 0) scrollSpeed = 0;
+
+                goal.x -= (scrollSpeed + 1); // Goal moves slightly independently for smooth entry
+                
+                ctx.font = "100px serif"; 
+                ctx.fillText("🌅", goal.x, goal.y);
                 ctx.textAlign = "center";
-                ctx.font = "bold 20px Poppins"; ctx.fillStyle = "#ff5252";
-                ctx.fillText("OUR HOME", goal.x + 45, goal.y + 100);
-                if(goal.x < bird.x) { finish(); return; }
+                ctx.font = "bold 22px Poppins"; ctx.fillStyle = "#ff5252";
+                ctx.fillText("BRIGHT FUTURE", goal.x + 50, goal.y + 100);
+                
+                if(goal.x < bird.x + 20) { finish(); return; }
             }
 
             if(gameState === 'PLAYING') animationId = requestAnimationFrame(animate);
