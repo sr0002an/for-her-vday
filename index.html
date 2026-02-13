@@ -5,131 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Lilz ❤️</title>
     <style>
-        :root {
-            --primary-pink: #ff8a80;
-            --soft-cream: #fffaf0;
-        }
+        :root { --p-pink: #ff8a80; --cream: #fffaf0; }
+        body { background: var(--cream); font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; text-align: center; }
+        .card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 320px; z-index: 10; display: none; }
+        #login-screen { display: block; }
+        input { padding: 12px; border: 1px solid #ddd; border-radius: 10px; width: 80%; margin-bottom: 15px; }
+        button { background: var(--p-pink); color: white; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        
+        /* Catching Game Canvas */
+        #game-canvas { position: absolute; top: 0; left: 0; display: none; cursor: crosshair; }
+        #score-board { position: absolute; top: 20px; font-size: 1.2rem; display: none; width: 100%; }
 
-        body {
-            background: linear-gradient(135deg, var(--soft-cream) 0%, #ffe0e0 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            text-align: center;
-            overflow: hidden;
-        }
-
-        #login-screen, #game-container, #final-note {
-            background: rgba(255, 255, 255, 0.6);
-            padding: 40px;
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            max-width: 85%;
-        }
-
-        #game-container, #final-note { display: none; }
-
-        input {
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid var(--primary-pink);
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        #heart {
-            font-size: 80px;
-            cursor: pointer;
-            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            user-select: none;
-            animation: heartbeat 1.5s infinite;
-        }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .progress-bar {
-            width: 250px;
-            height: 12px;
-            background: white;
-            border-radius: 10px;
-            margin: 20px auto;
-            overflow: hidden;
-        }
-
-        #progress {
-            width: 0%;
-            height: 100%;
-            background: var(--primary-pink);
-            transition: width 0.3s;
-        }
-
-        .couple-photo {
-            width: 100%;
-            max-width: 300px;
-            border-radius: 20px;
-            border: 5px solid white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-top: 20px;
-        }
+        /* Final Letter Styling */
+        #final-letter { overflow-y: auto; max-height: 80vh; }
+        .couple-photo { width: 100%; border-radius: 15px; margin: 15px 0; border: 4px solid #fff5f5; }
+        .letter-text { text-align: left; line-height: 1.6; font-size: 0.95rem; color: #444; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <h2>Enter Access Code</h2>
-        <p style="font-size: 0.8rem;">(Hint: Your birthday DDMMYYYY)</p>
-        <input type="text" id="passcode" placeholder="00000000">
-        <br>
-        <button onclick="checkCode()" style="background: var(--primary-pink); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">Unlock</button>
+    <div id="login-screen" class="card">
+        <h2>Hi Lilz.</h2>
+        <p>Enter the code to begin.</p>
+        <input type="text" id="passcode" placeholder="DDMMYYYY">
+        <button onclick="startQuest()">Unlock</button>
     </div>
 
-    <div id="game-container">
-        <h2>For my favorite person...</h2>
-        <div id="heart">❤️</div>
-        <div class="progress-bar"><div id="progress"></div></div>
-        <div id="msg">Tap the heart to see my message</div>
-    </div>
+    <div id="score-board">Catch 10 hearts to unlock the letter: <span id="score">0</span>/10</div>
+    <canvas id="game-canvas"></canvas>
 
-    <div id="final-note">
-        <h1 style="color: #ff5252;">I Love You, Lilz</h1>
-        <p>You make every day better. Here's to us.</p>
-        
+    <div id="final-letter" class="card">
+        <h1 style="color: var(--p-pink);">Found You.</h1>
         <img src="our-photo.jpg" alt="Us" class="couple-photo">
-        
-        <p style="margin-top:20px; font-style: italic;">"Signal Strength: Infinite"</p>
+        <div class="letter-text">
+            <p>Dear Lilz,</p>
+            <p>I wanted to do something a bit different for you today. You're the person who makes the busiest days feel easy, and even though we only have a few hours together tomorrow, I'm counting down the minutes.</p>
+            <p>You mean more to me than any "signal strength" can measure. Thank you for being you.</p>
+            <p><b>Always, <br> [Your Name]</b></p>
+        </div>
+        <button onclick="location.reload()" style="margin-top: 20px; opacity: 0.5;">Restart</button>
     </div>
 
     <script>
-        function checkCode() {
-            const code = document.getElementById('passcode').value;
-            if(code === "02112003") {
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        let score = 0;
+        let hearts = [];
+
+        function startQuest() {
+            if(document.getElementById('passcode').value === "02112003") {
                 document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('game-container').style.display = 'block';
-            } else {
-                alert("Wrong code! Try again.");
+                initGame();
+            } else { alert("Wrong code!"); }
+        }
+
+        function initGame() {
+            canvas.style.display = 'block';
+            document.getElementById('score-board').style.display = 'block';
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            animate();
+        }
+
+        class Heart {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = -50;
+                this.speed = 2 + Math.random() * 3;
+                this.size = 30;
+            }
+            draw() {
+                ctx.font = this.size + 'px serif';
+                ctx.fillText('❤️', this.x, this.y);
+            }
+            update() {
+                this.y += this.speed;
+                if(this.y > canvas.height) this.y = -50;
             }
         }
 
-        let clicks = 0;
-        const heart = document.getElementById('heart');
-        heart.addEventListener('click', () => {
-            clicks += 10;
-            document.getElementById('progress').style.width = clicks + '%';
-            heart.style.transform = 'scale(0.8)';
-            setTimeout(() => heart.style.transform = 'scale(1)', 50);
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if(hearts.length < 5) hearts.push(new Heart());
+            
+            hearts.forEach((h, index) => {
+                h.draw();
+                h.update();
+            });
 
-            if(clicks >= 100) {
-                document.getElementById('game-container').style.display = 'none';
-                document.getElementById('final-note').style.display = 'block';
-            }
+            if(score < 10) requestAnimationFrame(animate);
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            hearts.forEach((h, index) => {
+                if(Math.abs(e.clientX - h.x) < 30 && Math.abs(e.clientY - h.y) < 30) {
+                    hearts.splice(index, 1);
+                    score++;
+                    document.getElementById('score').innerText = score;
+                    if(score >= 10) {
+                        canvas.style.display = 'none';
+                        document.getElementById('score-board').style.display = 'none';
+                        document.getElementById('final-letter').style.display = 'block';
+                    }
+                }
+            });
         });
     </script>
 </body>
