@@ -7,43 +7,52 @@
     <style>
         :root { --p-pink: #ff8a80; --cream: #fffaf0; }
         body { background: var(--cream); font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; text-align: center; }
-        .card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 320px; z-index: 10; display: none; }
+        .card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 85%; max-width: 350px; z-index: 10; display: none; }
         #login-screen { display: block; }
         input { padding: 12px; border: 1px solid #ddd; border-radius: 10px; width: 80%; margin-bottom: 15px; }
         button { background: var(--p-pink); color: white; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; }
         
-        /* Catching Game Canvas */
-        #game-canvas { position: absolute; top: 0; left: 0; display: none; cursor: crosshair; }
-        #score-board { position: absolute; top: 20px; font-size: 1.2rem; display: none; width: 100%; }
+        #game-canvas { position: absolute; top: 0; left: 0; display: none; touch-action: none; }
+        #score-board { position: absolute; top: 40px; font-weight: bold; color: #d32f2f; display: none; width: 100%; z-index: 5; }
 
-        /* Final Letter Styling */
-        #final-letter { overflow-y: auto; max-height: 80vh; }
-        .couple-photo { width: 100%; border-radius: 15px; margin: 15px 0; border: 4px solid #fff5f5; }
-        .letter-text { text-align: left; line-height: 1.6; font-size: 0.95rem; color: #444; }
+        /* Final Page Styling */
+        #final-letter { overflow-y: auto; max-height: 90vh; display: none; }
+        .couple-photo { width: 100%; border-radius: 15px; margin: 15px 0; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .stats-box { background: #fff5f5; padding: 15px; border-radius: 15px; margin: 15px 0; border: 1px dashed var(--p-pink); }
+        .letter-text { text-align: left; line-height: 1.6; font-size: 0.9rem; color: #444; }
     </style>
 </head>
 <body>
 
     <div id="login-screen" class="card">
         <h2>Hi Lilz.</h2>
-        <p>Enter the code to begin.</p>
+        <p>Enter your birthday to begin.</p>
         <input type="text" id="passcode" placeholder="DDMMYYYY">
+        <br>
         <button onclick="startQuest()">Unlock</button>
     </div>
 
-    <div id="score-board">Catch 10 hearts to unlock the letter: <span id="score">0</span>/10</div>
+    <div id="score-board">Hearts Collected: <span id="score">0</span>/10</div>
     <canvas id="game-canvas"></canvas>
 
     <div id="final-letter" class="card">
-        <h1 style="color: var(--p-pink);">Found You.</h1>
+        <h1 style="color: var(--p-pink); margin-bottom: 5px;">I Love You</h1>
+        
+        <div class="stats-box">
+            <p style="margin: 0; font-size: 0.8rem; color: #888;">Days Together</p>
+            <h2 id="days-count" style="margin: 5px 0; color: #ff5252;">---</h2>
+            <p style="margin: 0; font-size: 0.9rem; font-weight: bold;">To eternity together.</p>
+        </div>
+
         <img src="our-photo.jpg" alt="Us" class="couple-photo">
+        
         <div class="letter-text">
             <p>Dear Lilz,</p>
-            <p>I wanted to do something a bit different for you today. You're the person who makes the busiest days feel easy, and even though we only have a few hours together tomorrow, I'm counting down the minutes.</p>
-            <p>You mean more to me than any "signal strength" can measure. Thank you for being you.</p>
-            <p><b>Always, <br> [Your Name]</b></p>
+            <p>I wanted to do something a bit different for you today. You're the person who makes the busiest days feel easy, and I'm counting down the minutes until I see you tomorrow.</p>
+            <p>Thank you for being my constant. You mean everything to me.</p>
+            <p><b>Happy Valentine's Day. ❤️</b></p>
         </div>
-        <button onclick="location.reload()" style="margin-top: 20px; opacity: 0.5;">Restart</button>
+        <button onclick="location.reload()" style="margin-top: 15px; font-size: 0.7rem; background: #eee; color: #888;">Restart</button>
     </div>
 
     <script>
@@ -51,6 +60,7 @@
         const ctx = canvas.getContext('2d');
         let score = 0;
         let hearts = [];
+        const heartColors = ['❤️', '💖', '💝', '💕', '🧡', '💛', '💜'];
 
         function startQuest() {
             if(document.getElementById('passcode').value === "02112003") {
@@ -69,26 +79,29 @@
 
         class Heart {
             constructor() {
-                this.x = Math.random() * canvas.width;
+                this.x = Math.random() * (canvas.width - 40) + 20;
                 this.y = -50;
-                this.speed = 2 + Math.random() * 3;
-                this.size = 30;
+                this.speed = 1.5 + Math.random() * 2; // Slower speed
+                this.emoji = heartColors[Math.floor(Math.random() * heartColors.length)];
             }
             draw() {
-                ctx.font = this.size + 'px serif';
-                ctx.fillText('❤️', this.x, this.y);
+                ctx.font = '40px serif';
+                ctx.fillText(this.emoji, this.x, this.y);
             }
             update() {
                 this.y += this.speed;
-                if(this.y > canvas.height) this.y = -50;
+                if(this.y > canvas.height) {
+                    this.y = -50;
+                    this.x = Math.random() * (canvas.width - 40) + 20;
+                }
             }
         }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if(hearts.length < 5) hearts.push(new Heart());
+            if(hearts.length < 6) hearts.push(new Heart());
             
-            hearts.forEach((h, index) => {
+            hearts.forEach(h => {
                 h.draw();
                 h.update();
             });
@@ -96,20 +109,35 @@
             if(score < 10) requestAnimationFrame(animate);
         }
 
-        canvas.addEventListener('mousedown', (e) => {
+        function handleInput(clientX, clientY) {
             hearts.forEach((h, index) => {
-                if(Math.abs(e.clientX - h.x) < 30 && Math.abs(e.clientY - h.y) < 30) {
+                const dist = Math.sqrt((clientX - h.x)**2 + (clientY - h.y + 20)**2);
+                if(dist < 40) {
                     hearts.splice(index, 1);
                     score++;
                     document.getElementById('score').innerText = score;
                     if(score >= 10) {
-                        canvas.style.display = 'none';
-                        document.getElementById('score-board').style.display = 'none';
-                        document.getElementById('final-letter').style.display = 'block';
+                        showFinal();
                     }
                 }
             });
-        });
+        }
+
+        canvas.addEventListener('mousedown', (e) => handleInput(e.clientX, e.clientY));
+        canvas.addEventListener('touchstart', (e) => handleInput(e.touches[0].clientX, e.touches[0].clientY));
+
+        function showFinal() {
+            canvas.style.display = 'none';
+            document.getElementById('score-board').style.display = 'none';
+            document.getElementById('final-letter').style.display = 'block';
+            
+            // Calculate Days
+            const start = new Date("2024-07-19");
+            const today = new Date("2026-02-14");
+            const diffTime = Math.abs(today - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('days-count').innerText = diffDays + " Days";
+        }
     </script>
 </body>
 </html>
