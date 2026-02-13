@@ -2,49 +2,146 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>For Lilz ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --p-pink: #ff8a80; --cream: #fffaf0; }
-        body { background: var(--cream); font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; text-align: center; }
-        .card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 85%; max-width: 350px; z-index: 10; display: none; }
-        #login-screen { display: block; }
-        input { padding: 12px; border: 1px solid #ddd; border-radius: 10px; width: 80%; margin-bottom: 15px; }
-        button { background: var(--p-pink); color: white; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-        
-        #game-canvas { position: absolute; top: 0; left: 0; display: none; touch-action: none; }
-        #score-board { position: absolute; top: 40px; font-weight: bold; color: #d32f2f; display: none; width: 100%; z-index: 5; }
+        :root { 
+            --p-pink: #ff8a80; 
+            --dark-pink: #ff5252;
+            --cream: #fffaf0; 
+        }
 
-        #final-letter { overflow-y: auto; max-height: 90vh; display: none; }
-        .couple-photo { width: 100%; border-radius: 15px; margin: 15px 0; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
-        /* Updated Stats Box */
-        .stats-box { background: #fff5f5; padding: 20px; border-radius: 15px; margin: 15px 0; border: 1px dashed var(--p-pink); }
-        .stats-label { margin: 0; font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-        .stats-number { margin: 8px 0; color: #ff5252; font-size: 1.8rem; font-weight: bold; }
-        .stats-footer { margin: 0; font-size: 1rem; color: #5d4037; }
+        body { 
+            background: var(--cream); 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh;
+            touch-action: none;
+        }
 
-        .letter-text { text-align: left; line-height: 1.6; font-size: 0.95rem; color: #444; }
+        /* Fancy Pop-out Text Styling */
+        h1, h2 { 
+            font-family: 'Dancing Script', cursive; 
+            color: var(--dark-pink);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            filter: drop-shadow(0 0 10px rgba(255, 138, 128, 0.3));
+        }
+
+        .card { 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 35px; 
+            border-radius: 30px; 
+            box-shadow: 0 20px 50px rgba(255, 138, 128, 0.2); 
+            width: 85%; 
+            max-width: 400px; 
+            z-index: 100; 
+            text-align: center;
+            border: 2px solid #fff;
+            display: none;
+        }
+
+        #login-screen { display: block; animation: float 3s ease-in-out infinite; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        input { 
+            padding: 15px; 
+            border: 2px solid #ffe0e0; 
+            border-radius: 15px; 
+            width: 80%; 
+            margin-bottom: 20px; 
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--p-pink); box-shadow: 0 0 10px rgba(255, 138, 128, 0.2); }
+
+        button { 
+            background: linear-gradient(45deg, var(--p-pink), var(--dark-pink));
+            color: white; 
+            border: none; 
+            padding: 15px 35px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(255, 82, 82, 0.3);
+            transition: 0.3s;
+        }
+
+        button:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(255, 82, 82, 0.4); }
+
+        /* Game UI */
+        #game-canvas { position: absolute; top: 0; left: 0; display: none; background: #fff5f5; }
+        
+        #game-ui {
+            position: absolute;
+            top: 40px;
+            width: 100%;
+            text-align: center;
+            z-index: 50;
+            display: none;
+            pointer-events: none;
+        }
+
+        .score-tag {
+            background: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            color: var(--dark-pink);
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            font-size: 1.2rem;
+        }
+
+        /* Final Letter Styling */
+        #final-letter { overflow-y: auto; max-height: 85vh; padding: 25px; }
+        
+        .stats-box { 
+            background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+            padding: 20px; 
+            border-radius: 20px; 
+            margin: 20px 0; 
+            border: 1px solid #ffe0e0;
+        }
+
+        .stats-number { color: var(--dark-pink); font-size: 2.2rem; font-weight: 700; margin: 10px 0; }
+        .stats-footer { font-family: 'Dancing Script', cursive; font-size: 1.4rem; color: #5d4037; }
+
+        .letter-text { text-align: left; line-height: 1.7; font-size: 1rem; color: #444; border-top: 1px solid #eee; padding-top: 20px; }
+        .couple-photo { width: 100%; border-radius: 20px; margin: 20px 0; border: 5px solid #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
     <div id="login-screen" class="card">
-        <h2>Hi Lilz.</h2>
-        <p>Enter MY MOST SPECIAL DAY to begin.(DDMMYYYY)</p>
-        <input type="text" id="passcode" placeholder="DDMMYYYY">
+        <h1>Hi Lilz ❤️</h1>
+        <p>Enter our special code to start the adventure</p>
+        <input type="text" id="passcode" placeholder="DDMMYYYY" autocomplete="off">
         <br>
-        <button onclick="startQuest()">Unlock</button>
+        <button onclick="startQuest()">Unlock My Heart</button>
     </div>
 
-    <div id="score-board">Tap to collect. Hearts Collected: <span id="score">0</span>/10</div>
+    <div id="game-ui">
+        <span class="score-tag">Score: <span id="score">0</span> / 5</span>
+        <p style="color: #ff8a80; margin-top: 10px; font-weight: 600;">Tap to fly! Avoid the clouds!</p>
+    </div>
     <canvas id="game-canvas"></canvas>
 
     <div id="final-letter" class="card">
-        <h1 style="color: var(--p-pink); margin-bottom: 5px;">I Love You</h1>
+        <h1>I Love You</h1>
         
         <div class="stats-box">
-            <p class="stats-label">Days Together</p>
+            <p style="margin: 0; color: #888; letter-spacing: 1px;">DAYS TOGETHER</p>
             <div class="stats-number" id="days-count">---</div>
             <p class="stats-footer">🥂 to an eternity tgt.</p>
         </div>
@@ -54,88 +151,150 @@
         <div class="letter-text">
             <p>Dear Lilz my beloved 🥰,</p>
             <p>I hope you liked this lil surprise. I wanted to do something a bit different for you today.</p>
-            <p>I have so many aspirations for our future. These past few months have been tough for us, but it’s okay,we’ve got this. I am gonna come out as a better person from this. As a matter of fact, I’m not the type to say I’d die for you. Instead, I will change for you, I will live for you, and I will be better for you.</p>
-            <p>The patch I’m going through isn't easy, but I enjoy it because I know I’m going to emerge victorious, and our future is going to be bright. Let’s achieve all our dreams for this year together; to list a few: me driving you around, a very successful Uthraa, and my dearest ones's graduation. Thank you for being you and such a blessing in my life. I will always love ❤️ my tiny specimen.🌹😘</p>
+            <p>I have so many aspirations for our future. These past few months have been tough for us, but it’s okay. We’ve got this. I am gonna come out as a better person from this. As a matter of fact, I’m not the type to say I’d die for you, instead, I will change for you, I will live for you, and I will be better for you.</p>
+            <p>The patch I’m going through isn't easy, but I enjoy it because I know I’m going to emerge victorious, and our future is going to be bright. Let’s achieve all our dreams for this year together; to list a few: me driving you around, a very successful Uthraa, and my dearest one's graduation. Thank you for being you and such a blessing in my life. I will always love ❤️ my tiny specimen. 🌹😘</p>
             <p>Always with immeasurable love,<br><b>Mr Sri</b></p>
         </div>
-        <button onclick="location.reload()" style="margin-top: 20px; font-size: 0.7rem; background: #eee; color: #888;">Restart</button>
+        <button onclick="location.reload()" style="margin-top: 25px; background: #f0f0f0; color: #666; font-size: 0.8rem; box-shadow: none;">Play Again</button>
     </div>
 
     <script>
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        
+        let gameState = 'START';
         let score = 0;
-        let hearts = [];
-        const heartColors = ['❤️', '💖', '💝', '💕', '🧡', '💛', '💜'];
+        let bird, pipes, animationId;
+
+        // BIRD SETTINGS
+        const BIRD_EMOJI = '❤️';
+        const GRAVITY = 0.25;
+        const JUMP = -4.5;
+
+        class Bird {
+            constructor() {
+                this.x = 50;
+                this.y = canvas.height / 2;
+                this.velocity = 0;
+                this.size = 35;
+            }
+            draw() {
+                ctx.font = `${this.size}px serif`;
+                ctx.fillText(BIRD_EMOJI, this.x, this.y);
+            }
+            update() {
+                this.velocity += GRAVITY;
+                this.y += this.velocity;
+                if (this.y > canvas.height) this.y = canvas.height;
+                if (this.y < 0) this.y = 0;
+            }
+        }
+
+        class Pipe {
+            constructor() {
+                this.top = Math.random() * (canvas.height / 2);
+                this.bottom = Math.random() * (canvas.height / 2);
+                this.x = canvas.width;
+                this.w = 60;
+                this.speed = 3;
+                this.passed = false;
+            }
+            draw() {
+                ctx.fillStyle = '#ffcdd2';
+                // Draw clouds instead of pipes
+                ctx.font = '50px serif';
+                ctx.fillText('☁️', this.x, this.top);
+                ctx.fillText('☁️', this.x, canvas.height - this.bottom);
+            }
+            update() {
+                this.x -= this.speed;
+            }
+        }
 
         function startQuest() {
             if(document.getElementById('passcode').value === "02112003") {
                 document.getElementById('login-screen').style.display = 'none';
                 initGame();
-            } else { alert("Wrong code!"); }
+            } else { alert("Wrong code! Think about her birthday... ❤️"); }
         }
 
         function initGame() {
             canvas.style.display = 'block';
-            document.getElementById('score-board').style.display = 'block';
+            document.getElementById('game-ui').style.display = 'block';
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            
+            bird = new Bird();
+            pipes = [];
+            score = 0;
+            gameState = 'PLAYING';
             animate();
-        }
-
-        class Heart {
-            constructor() {
-                this.x = Math.random() * (canvas.width - 40) + 20;
-                this.y = -50;
-                this.speed = 1.5 + Math.random() * 2;
-                this.emoji = heartColors[Math.floor(Math.random() * heartColors.length)];
-            }
-            draw() {
-                ctx.font = '40px serif';
-                ctx.fillText(this.emoji, this.x, this.y);
-            }
-            update() {
-                this.y += this.speed;
-                if(this.y > canvas.height) {
-                    this.y = -50;
-                    this.x = Math.random() * (canvas.width - 40) + 20;
-                }
-            }
         }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if(hearts.length < 6) hearts.push(new Heart());
-            hearts.forEach(h => { h.draw(); h.update(); });
-            if(score < 10) requestAnimationFrame(animate);
-        }
+            
+            bird.update();
+            bird.draw();
 
-        function handleInput(clientX, clientY) {
-            hearts.forEach((h, index) => {
-                const dist = Math.sqrt((clientX - h.x)**2 + (clientY - h.y + 20)**2);
-                if(dist < 40) {
-                    hearts.splice(index, 1);
-                    score++;
-                    document.getElementById('score').innerText = score;
-                    if(score >= 10) showFinal();
+            if (Math.floor(Date.now() / 10) % 150 === 0) {
+                pipes.push(new Pipe());
+            }
+
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                pipes[i].update();
+                pipes[i].draw();
+
+                // Collision Check
+                if (bird.x + 20 > pipes[i].x && bird.x < pipes[i].x + pipes[i].w) {
+                    if (bird.y < pipes[i].top || bird.y > canvas.height - pipes[i].bottom) {
+                        resetLevel();
+                    }
                 }
-            });
+
+                if (!pipes[i].passed && pipes[i].x < bird.x) {
+                    pipes[i].passed = true;
+                    score++;
+                    scoreEl.innerText = score;
+                    if (score >= 5) {
+                        showFinal();
+                        return;
+                    }
+                }
+
+                if (pipes[i].x + pipes[i].w < 0) pipes.splice(i, 1);
+            }
+
+            if (gameState === 'PLAYING') animationId = requestAnimationFrame(animate);
         }
 
-        canvas.addEventListener('mousedown', (e) => handleInput(e.clientX, e.clientY));
-        canvas.addEventListener('touchstart', (e) => handleInput(e.touches[0].clientX, e.touches[0].clientY));
+        function resetLevel() {
+            bird.y = canvas.height / 2;
+            bird.velocity = 0;
+            pipes = [];
+            score = 0;
+            scoreEl.innerText = score;
+        }
 
         function showFinal() {
+            gameState = 'FINISHED';
+            cancelAnimationFrame(animationId);
             canvas.style.display = 'none';
-            document.getElementById('score-board').style.display = 'none';
+            document.getElementById('game-ui').style.display = 'none';
             document.getElementById('final-letter').style.display = 'block';
             
+            // Stats Calculation
             const start = new Date("2024-07-19");
             const today = new Date("2026-02-14");
-            const diffTime = Math.abs(today - start);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffDays = Math.ceil(Math.abs(today - start) / (1000 * 60 * 60 * 24));
             document.getElementById('days-count').innerText = diffDays + " Days";
         }
+
+        const triggerJump = () => { if(gameState === 'PLAYING') bird.velocity = JUMP; };
+        window.addEventListener('mousedown', triggerJump);
+        window.addEventListener('touchstart', triggerJump);
+
     </script>
 </body>
 </html>
