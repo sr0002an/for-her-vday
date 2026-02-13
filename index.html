@@ -64,7 +64,7 @@
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         const scoreEl = document.getElementById('score');
-        let gameState = 'START', score = 0, bird, obstacles, goal, animationId, bgX = 0, scrollSpeed = 3.2;
+        let gameState = 'START', score = 0, bird, obstacles, goal, animationId, bgX = 0, scrollSpeed = 3.2, totalSpawned = 0;
 
         const STRUGGLES = ["STRESS", "DOUBT", "HARDSHIP", "STORM", "CHALLENGES", "DISTANCE", "MISUNDERSTANDING", "FATIGUE"];
         
@@ -117,6 +117,7 @@
                 canvas.height = window.innerHeight;
                 bird = new Bird(); 
                 obstacles = [new Obstacle(canvas.width)]; 
+                totalSpawned = 1;
                 goal = null; 
                 score = 0;
                 scrollSpeed = 3.2;
@@ -132,7 +133,6 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             ctx.font = "30px serif";
-            // Sky elements
             const elements = [
                 {e: "☁️", x: 100, y: 100}, {e: "🕊️", x: 600, y: 150},
                 {e: "☁️", x: 400, y: 300}, {e: "🎈", x: 800, y: 400},
@@ -150,10 +150,11 @@
             bird.update(); 
             bird.draw();
 
-            // Stop spawning after score 9 so score 10 is the last wall
-            if(score < 9 && obstacles.length < 3) {
+            // Strict limit: Only spawn 10 obstacles total.
+            if(totalSpawned < 10 && obstacles.length < 3) {
                 const lastObstacleX = obstacles[obstacles.length - 1].x;
                 obstacles.push(new Obstacle(lastObstacleX));
+                totalSpawned++;
             }
 
             for (let i = obstacles.length - 1; i >= 0; i--) {
@@ -164,6 +165,7 @@
                 if(bird.x + 80 > o.x && bird.x < o.x + o.w && (bird.y - 30 < o.top || bird.y > o.top + o.gap - 20)) {
                     score = 0; scoreEl.innerText = 0; bird.y = canvas.height/2; bird.v = 0;
                     obstacles = [new Obstacle(canvas.width)];
+                    totalSpawned = 1;
                 }
 
                 if(o.x + o.w < bird.x && !o.passed) { 
@@ -175,11 +177,10 @@
             if(score >= 10) {
                 if(!goal) goal = { x: canvas.width + 100, y: canvas.height/2 };
                 
-                // Slow down as we reach the future
                 if (scrollSpeed > 0) scrollSpeed -= 0.02;
                 if (scrollSpeed < 0) scrollSpeed = 0;
 
-                goal.x -= (scrollSpeed + 1); // Goal moves slightly independently for smooth entry
+                goal.x -= (scrollSpeed + 1); 
                 
                 ctx.font = "100px serif"; 
                 ctx.fillText("🌅", goal.x, goal.y);
