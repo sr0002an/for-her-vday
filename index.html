@@ -5,81 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For My VP ❤️</title>
     <style>
+        :root {
+            --primary-pink: #ff8a80;
+            --soft-cream: #fffaf0;
+            --text-brown: #5d4037;
+        }
+
         body {
-            background-color: #fffaf0; /* Creamy Ahimsa vibe */
+            background: linear-gradient(135deg, var(--soft-cream) 0%, #ffe0e0 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #5d4037;
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: var(--text-brown);
             text-align: center;
+            overflow: hidden;
         }
 
         #game-container {
-            padding: 20px;
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 40px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.8;
         }
 
         #heart {
-            font-size: 50px;
+            font-size: 80px;
             cursor: pointer;
-            transition: transform 0.2s, font-size 0.3s;
+            display: inline-block;
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             user-select: none;
+            filter: drop-shadow(0 5px 15px rgba(255, 138, 128, 0.4));
+            animation: heartbeat 1.5s infinite;
         }
 
-        #heart:active {
-            transform: scale(0.9);
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.1); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
         }
 
-        .progress-bar {
-            width: 250px;
-            height: 20px;
-            background-color: #e0e0e0;
-            border-radius: 10px;
-            margin: 20px 0;
+        .progress-container {
+            width: 280px;
+            height: 14px;
+            background-color: rgba(255,255,255,0.6);
+            border-radius: 20px;
+            margin: 30px auto;
+            border: 2px solid white;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
             overflow: hidden;
         }
 
         #progress {
             width: 0%;
             height: 100%;
-            background-color: #ff8a80;
-            transition: width 0.3s;
+            background: linear-gradient(90deg, #ff8a80, #ff5252);
+            transition: width 0.4s ease-out;
         }
 
         #message {
-            font-weight: bold;
-            height: 50px;
-            margin-top: 10px;
+            font-style: italic;
+            font-weight: 500;
+            min-height: 24px;
+            color: #d32f2f;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUp 3s forwards;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
         }
 
         #final-note {
             display: none;
             background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 80%;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            max-width: 85%;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
     <div id="game-container">
-        <h2>Click the heart to charge my love signal...</h2>
+        <h2>Executive Love Sync</h2>
         <div id="heart">❤️</div>
-        <div class="progress-bar">
+        <div class="progress-container">
             <div id="progress"></div>
         </div>
-        <div id="message">Tap to start!</div>
+        <div id="message">Ready to sync, VP?</div>
     </div>
 
     <div id="final-note">
-        <h1>Happy Valentine's Day!</h1>
-        <p>Whether we're at Real Food or just window shopping in Orchard, I'm just glad I have the best partner by my side.</p>
-        <p><b>Signal Strength: 100% (Infinite)</b></p>
+        <h1 style="color: #ff5252;">Signal Lock: 100%</h1>
+        <p>You're the best VP a President could ask for.</p>
+        <p>Happy Valentine's Day! <br> I'm so lucky to have you in my orbit.</p>
+        <button onclick="location.reload()" style="background: #ff8a80; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; margin-top: 10px;">Replay</button>
     </div>
 
     <script>
@@ -91,27 +142,46 @@
         const finalNote = document.getElementById('final-note');
 
         const phrases = [
-            "Initializing signal...",
-            "Loading favorite memories...",
-            "Checking compatibility... (100% found)",
-            "Wait, the meter is breaking!",
-            "Almost there..."
+            "Syncing heartbeats...",
+            "Loading favorite moments...",
+            "Bypassing firewalls of love...",
+            "Signal strength peaking!",
+            "OVERLOAD! ❤️❤️❤️"
         ];
 
-        heart.addEventListener('click', () => {
-            clicks += 5;
-            let currentSize = 50 + clicks;
+        function createParticle(x, y) {
+            const p = document.createElement('div');
+            p.innerHTML = '✨';
+            p.className = 'particle';
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 2000);
+        }
+
+        heart.addEventListener('click', (e) => {
+            clicks += 4;
+            let currentSize = 80 + (clicks * 0.5);
             heart.style.fontSize = currentSize + 'px';
             progress.style.width = Math.min(clicks, 100) + '%';
+            
+            // Visual Feedback
+            heart.style.transform = 'scale(0.8)';
+            setTimeout(() => heart.style.transform = 'scale(1)', 50);
+            createParticle(e.clientX, e.clientY);
 
+            // Change Messages
             if (clicks < 25) message.innerText = phrases[0];
             else if (clicks < 50) message.innerText = phrases[1];
             else if (clicks < 75) message.innerText = phrases[2];
-            else if (clicks < 100) message.innerText = phrases[3];
+            else if (clicks < 95) message.innerText = phrases[3];
+            else message.innerText = phrases[4];
 
             if (clicks >= 100) {
-                gameContainer.style.display = 'none';
-                finalNote.style.display = 'block';
+                setTimeout(() => {
+                    gameContainer.style.display = 'none';
+                    finalNote.style.display = 'block';
+                }, 500);
             }
         });
     </script>
