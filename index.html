@@ -15,11 +15,16 @@
         #game-canvas { position: absolute; top: 0; left: 0; display: none; touch-action: none; }
         #score-board { position: absolute; top: 40px; font-weight: bold; color: #d32f2f; display: none; width: 100%; z-index: 5; }
 
-        /* Final Page Styling */
         #final-letter { overflow-y: auto; max-height: 90vh; display: none; }
         .couple-photo { width: 100%; border-radius: 15px; margin: 15px 0; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .stats-box { background: #fff5f5; padding: 15px; border-radius: 15px; margin: 15px 0; border: 1px dashed var(--p-pink); }
-        .letter-text { text-align: left; line-height: 1.6; font-size: 0.9rem; color: #444; }
+        
+        /* Updated Stats Box */
+        .stats-box { background: #fff5f5; padding: 20px; border-radius: 15px; margin: 15px 0; border: 1px dashed var(--p-pink); }
+        .stats-label { margin: 0; font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .stats-number { margin: 8px 0; color: #ff5252; font-size: 1.8rem; font-weight: bold; }
+        .stats-footer { margin: 0; font-size: 1rem; color: #5d4037; }
+
+        .letter-text { text-align: left; line-height: 1.6; font-size: 0.95rem; color: #444; }
     </style>
 </head>
 <body>
@@ -39,20 +44,21 @@
         <h1 style="color: var(--p-pink); margin-bottom: 5px;">I Love You</h1>
         
         <div class="stats-box">
-            <p style="margin: 0; font-size: 0.8rem; color: #888;">Days Together</p>
-            <h2 id="days-count" style="margin: 5px 0; color: #ff5252;">---</h2>
-            <p style="margin: 0; font-size: 0.9rem; font-weight: bold;">To eternity together.</p>
+            <p class="stats-label">Days Together</p>
+            <div class="stats-number" id="days-count">---</div>
+            <p class="stats-footer">🥂 to an eternity tgt.</p>
         </div>
 
         <img src="our-photo.jpg" alt="Us" class="couple-photo">
         
         <div class="letter-text">
-            <p>Dear Lilz,</p>
-            <p>I wanted to do something a bit different for you today. You're the person who makes the busiest days feel easy, and I'm counting down the minutes until I see you tomorrow.</p>
-            <p>Thank you for being my constant. You mean everything to me.</p>
-            <p><b>Happy Valentine's Day. ❤️</b></p>
+            <p>Dear Lilz my beloved 🥰,</p>
+            <p>I hope you liked the little effort I put into creating this for you. I wanted to do something a bit different for you today.</p>
+            <p>I have so many aspirations for our future. These past few months have been tough for us, but it’s okay,we’ve got this. I need you to better me. As a matter of fact, I’m not the type to say I’d die for you. Instead, I will change for you, I will live for you, and I will be better for you.</p>
+            <p>The patch I’m going through isn't easy, but I enjoy it because I know I’m going to emerge victorious, and our future is going to be bright. Let’s achieve all our dreams for this year together; to list a few: me driving you around and a very successful Uthraa. Thank you for being you and such a blessing in my life. I will always love ❤️ my tiny specimen.🌹😘</p>
+            <p>Always with immeasurable love,<br><b>Mr Sri</b></p>
         </div>
-        <button onclick="location.reload()" style="margin-top: 15px; font-size: 0.7rem; background: #eee; color: #888;">Restart</button>
+        <button onclick="location.reload()" style="margin-top: 20px; font-size: 0.7rem; background: #eee; color: #888;">Restart</button>
     </div>
 
     <script>
@@ -81,7 +87,7 @@
             constructor() {
                 this.x = Math.random() * (canvas.width - 40) + 20;
                 this.y = -50;
-                this.speed = 1.5 + Math.random() * 2; // Slower speed
+                this.speed = 1.5 + Math.random() * 2;
                 this.emoji = heartColors[Math.floor(Math.random() * heartColors.length)];
             }
             draw() {
@@ -100,12 +106,7 @@
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if(hearts.length < 6) hearts.push(new Heart());
-            
-            hearts.forEach(h => {
-                h.draw();
-                h.update();
-            });
-
+            hearts.forEach(h => { h.draw(); h.update(); });
             if(score < 10) requestAnimationFrame(animate);
         }
 
@@ -116,9 +117,7 @@
                     hearts.splice(index, 1);
                     score++;
                     document.getElementById('score').innerText = score;
-                    if(score >= 10) {
-                        showFinal();
-                    }
+                    if(score >= 10) showFinal();
                 }
             });
         }
@@ -131,7 +130,6 @@
             document.getElementById('score-board').style.display = 'none';
             document.getElementById('final-letter').style.display = 'block';
             
-            // Calculate Days
             const start = new Date("2024-07-19");
             const today = new Date("2026-02-14");
             const diffTime = Math.abs(today - start);
